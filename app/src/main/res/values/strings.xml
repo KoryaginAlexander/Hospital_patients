@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hospital_patients</string>
+
+    <string-array name="sort_options_patient">
+        <item>По фамилии</item>
+        <item>По дате поступления</item>
+    </string-array>
+
+</resources>
