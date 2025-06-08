@@ -29,7 +29,7 @@ public class SignUpActivity extends AppCompatActivity {
         buttonGoToLogin = findViewById(R.id.buttonGoToLogin);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:5000") // Замените на ваш адрес
+                .baseUrl("http://212.192.31.136:5000") // Замените на ваш адрес
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);

@@ -29,7 +29,7 @@ public class AddEditHospitalActivity extends AppCompatActivity {
     private TextView textViewTitle;
 
     // TODO: Use proper URL (from config/constants)
-    private static final String BASE_URL = "http://192.168.31.234:5000"; // Changed back to http from https
+    private static final String BASE_URL = "http://212.192.31.136:5000"; // Changed back to http from https
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

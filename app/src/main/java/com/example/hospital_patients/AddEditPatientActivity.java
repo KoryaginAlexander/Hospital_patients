@@ -37,7 +37,7 @@ public class AddEditPatientActivity extends AppCompatActivity {
     private TextView textViewTitle;
 
     // TODO: Use proper URL (from config/constants)
-    private static final String BASE_URL = "http://10.0.2.2:5000";
+    private static final String BASE_URL = "http://212.192.31.136:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

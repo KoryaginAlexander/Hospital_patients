@@ -42,7 +42,7 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
     private ImageView fabAddPatient;
 
     // TODO: Use proper URL (from config/constants)
-    private static final String BASE_URL = "http://10.0.2.2:5000"; // Use 10.0.2.2 for Android emulator localhost
+    private static final String BASE_URL = "http://212.192.31.136:5000"; // Use 10.0.2.2 for Android emulator localhost
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
