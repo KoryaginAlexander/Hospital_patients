@@ -34,44 +34,39 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
     private int hospitalId;
     private List<Patient> patientList;
 
-    // New UI elements
+
     private ImageView imageViewBack;
     private TextView textViewTitle;
     private ImageView imageViewRefresh;
     private Spinner spinnerSortBy;
     private ImageView fabAddPatient;
 
-    // TODO: Use proper URL (from config/constants)
-    private static final String BASE_URL = "http://212.192.31.136:5000"; // Use 10.0.2.2 for Android emulator localhost
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_list);
 
-        // Get hospitalId and hospitalName from Intent
         if (getIntent().hasExtra("hospital_id")) {
             hospitalId = getIntent().getIntExtra("hospital_id", -1);
-            // Get hospital name from Intent
             String hospitalName = getIntent().getStringExtra("hospital_name");
 
             textViewTitle = findViewById(R.id.textViewTitle);
             if (hospitalName != null && !hospitalName.isEmpty()) {
-                textViewTitle.setText("Пациенты больницы " + hospitalName); // Set title with hospital name
+                textViewTitle.setText("Пациенты больницы " + hospitalName); 
             } else {
-                textViewTitle.setText("Пациенты больницы"); // Default title if name is not available
+                textViewTitle.setText("Пациенты больницы"); 
             }
 
             if (hospitalId == -1) {
-                finish(); // Close activity if no valid hospitalId
+                finish(); 
                 return;
             }
         } else {
-            finish(); // Close activity if no hospitalId
+            finish();   
             return;
         }
 
-        // Initialize UI elements
+ 
         imageViewBack = findViewById(R.id.imageViewBack);
         imageViewRefresh = findViewById(R.id.imageViewRefresh);
         spinnerSortBy = findViewById(R.id.spinnerSortBy);
@@ -80,17 +75,14 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
         recyclerViewPatients = findViewById(R.id.recyclerViewPatients);
         recyclerViewPatients.setLayoutManager(new LinearLayoutManager(this));
 
-        // Set up listeners for top bar icons
         imageViewBack.setOnClickListener(v -> {
-            finish(); // Go back to the previous activity (HospitalListActivity)
+            finish(); 
         });
 
         imageViewRefresh.setOnClickListener(v -> {
-            // Implement refresh logic
-            fetchPatients(hospitalId); // Refresh the list
+            fetchPatients(hospitalId); 
         });
 
-        // Configure Spinner for sorting
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_options_patient, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -118,11 +110,9 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
             }
         });
 
-        // Set up listener for FAB
         fabAddPatient.setOnClickListener(v -> {
-            // Implement add patient logic (start new activity)
             Intent intent = new Intent(PatientListActivity.this, AddEditPatientActivity.class);
-            intent.putExtra("hospital_id", hospitalId); // Pass hospital ID for new patient
+            intent.putExtra("hospital_id", hospitalId); 
             startActivity(intent);
         });
 
@@ -133,21 +123,20 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the list when returning from AddEditPatientActivity
         fetchPatients(hospitalId);
     }
 
     private void setupRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(AppConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
     }
 
     private void fetchPatients(int hospitalId) {
-        // TODO: Get actual token after login
-        String authToken = "Bearer YOUR_JWT_TOKEN"; // Using placeholder - Replace with actual token
+
+        String authToken = "Bearer YOUR_JWT_TOKEN";
 
         Call<List<Patient>> call = apiService.getPatients(authToken, hospitalId);
         call.enqueue(new Callback<List<Patient>>() {
@@ -155,11 +144,9 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
             public void onResponse(Call<List<Patient>> call, Response<List<Patient>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     patientList = response.body();
-                    // Pass 'this' as the listener to the adapter
                     patientAdapter = new PatientAdapter(patientList, PatientListActivity.this);
                     recyclerViewPatients.setAdapter(patientAdapter);
                 } else {
-                    // Handle API errors (e.g., 401 Unauthorized, 404 Not Found)
                     String errorMessage = "Ошибка получения пациентов: " + response.code();
                     if (response.errorBody() != null) {
                         try {
@@ -181,7 +168,6 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
 
     @Override
     public void onEditClick(Patient patient) {
-        // Handle edit action: start AddEditPatientActivity with patient data
         Intent intent = new Intent(PatientListActivity.this, AddEditPatientActivity.class);
         intent.putExtra("patient_id", patient.getId());
         intent.putExtra("hospital_id", patient.getHospitalId());
@@ -198,20 +184,18 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
 
     @Override
     public void onDeleteClick(Patient patient) {
-        // Show confirmation dialog before deleting
         new AlertDialog.Builder(this)
                 .setTitle("Удалить пациента")
                 .setMessage("Вы уверены, что хотите удалить " + patient.getSurname() + " " + patient.getName() + "?")
                 .setPositiveButton("Да", (dialog, which) -> {
-                    // User confirmed, proceed with deletion
                     deletePatient(patient.getId());
                 })
-                .setNegativeButton("Нет", null) // Do nothing on cancel
+                .setNegativeButton("Нет", null) 
                 .show();
     }
 
     private void deletePatient(int patientId) {
-        String authToken = "Bearer YOUR_JWT_TOKEN"; // Using placeholder - Replace with actual token
+        String authToken = "Bearer YOUR_JWT_TOKEN"; 
 
         Call<Void> call = apiService.deletePatient(authToken, patientId);
         call.enqueue(new Callback<Void>() {
@@ -219,7 +203,7 @@ public class PatientListActivity extends AppCompatActivity implements PatientAda
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d("PatientListActivity", "Patient deleted successfully: " + patientId);
-                    fetchPatients(hospitalId); // Refresh the list after deletion
+                    fetchPatients(hospitalId); 
                 } else {
                     String errorMessage = "Error deleting patient: " + response.code();
                     if (response.errorBody() != null) {

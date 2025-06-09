@@ -20,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import android.view.View; // Import View
+import android.view.View; 
 import android.widget.ImageView;
 import android.widget.AdapterView;
 import java.util.Collections;
@@ -32,14 +32,11 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
     private HospitalAdapter hospitalAdapter;
     private ApiService apiService;
     private BottomNavigationView bottomNavigationView;
-    private ImageView fabAddHospital; // Changed type from FloatingActionButton to ImageView
+    private ImageView fabAddHospital;
     private ImageView imageViewRefresh; 
-    private Spinner spinnerSortBy; // Объявлена переменная для Spinner сортировки
-    private TextView textViewTitle; // Объявлена переменная для TextView заголовка
-    private List<Hospital> hospitalList; // Объявлена переменная для списка больниц
-
-    // TODO: Use proper URL (from config/constants)
-    private static final String BASE_URL = "http://212.192.31.136:5000"; // Use 10.0.2.2 for Android emulator localhost
+    private Spinner spinnerSortBy; 
+    private TextView textViewTitle; 
+    private List<Hospital> hospitalList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,31 +53,26 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.navigation_profile) {
                     startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                    overridePendingTransition(0, 0); // Disable activity transition animation
+                    overridePendingTransition(0, 0);
                     return true;
                 } else if (item.getItemId() == R.id.navigation_hospitals) {
-                    // Already on this screen
                     return true;
                 }
                 return false;
             }
         });
 
-        // Find Floating Action Button and set listener
         fabAddHospital = findViewById(R.id.fabAddHospital);
         fabAddHospital.setOnClickListener(v -> {
-            // Implement add hospital logic (start new activity)
             Intent intent = new Intent(HospitalListActivity.this, AddEditHospitalActivity.class);
             startActivity(intent);
         });
 
-        // Find refresh button and set listener
         imageViewRefresh = findViewById(R.id.imageViewRefresh);
         imageViewRefresh.setOnClickListener(v -> {
-            fetchHospitals(); // Call fetchHospitals to refresh the list
+            fetchHospitals();
         });
 
-        // Initialize Spinner for sorting
         spinnerSortBy = findViewById(R.id.spinnerSortBy);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_options_hospital, android.R.layout.simple_spinner_item);
@@ -105,7 +97,6 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // Do nothing
             }
         });
 
@@ -116,33 +107,28 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the list when returning from AddEditHospitalActivity
         fetchHospitals();
     }
 
     private void setupRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(AppConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
     }
 
     private void fetchHospitals() {
-        // TODO: Get actual token after login
-        String authToken = "Bearer YOUR_JWT_TOKEN"; // Using placeholder - Replace with actual token
+        String authToken = "Bearer YOUR_JWT_TOKEN"; 
 
         Call<List<Hospital>> call = apiService.getHospitals(authToken);
         call.enqueue(new Callback<List<Hospital>>() {
             @Override
             public void onResponse(Call<List<Hospital>> call, Response<List<Hospital>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    hospitalList = response.body(); // Сохранить список больниц
-                    // Pass 'this' as the listener to the adapter
+                    hospitalList = response.body(); 
                     hospitalAdapter = new HospitalAdapter(hospitalList, HospitalListActivity.this);
                     recyclerViewHospitals.setAdapter(hospitalAdapter);
-
-                    // Sort the list initially based on the default spinner selection
                     String selectedOption = spinnerSortBy.getSelectedItem().toString();
                     if (selectedOption.equals("По названию (А-Я)")) {
                         Collections.sort(hospitalList, Comparator.comparing(Hospital::getName));
@@ -152,7 +138,6 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
                     hospitalAdapter.updateList(hospitalList);
 
                 } else {
-                    // Handle API errors (e.g., 401 Unauthorized, 404 Not Found)
                     String errorMessage = "Ошибка получения больниц: " + response.code();
                     if (response.errorBody() != null) {
                         try {
@@ -167,7 +152,6 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
 
             @Override
             public void onFailure(Call<List<Hospital>> call, Throwable t) {
-                // Removed Toast message
                 Log.e("HospitalListActivity", "Network error", t);
             }
         });
@@ -175,7 +159,6 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
 
     @Override
     public void onEditClick(Hospital hospital) {
-        // Handle edit action: start AddEditHospitalActivity with hospital data
         Intent intent = new Intent(HospitalListActivity.this, AddEditHospitalActivity.class);
         intent.putExtra("hospital_id", hospital.getId());
         intent.putExtra("hospital_name", hospital.getName());
@@ -186,20 +169,18 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
 
     @Override
     public void onDeleteClick(Hospital hospital) {
-        // Show confirmation dialog before deleting
         new AlertDialog.Builder(this)
                 .setTitle("Удалить больницу")
                 .setMessage("Вы уверены, что хотите удалить " + hospital.getName() + "?")
                 .setPositiveButton("Да", (dialog, which) -> {
-                    // User confirmed, proceed with deletion
                     deleteHospital(hospital.getId());
                 })
-                .setNegativeButton("Нет", null) // Do nothing on cancel
+                .setNegativeButton("Нет", null) 
                 .show();
     }
 
     private void deleteHospital(int hospitalId) {
-        String authToken = "Bearer YOUR_JWT_TOKEN"; // Using placeholder - Replace with actual token
+        String authToken = "Bearer YOUR_JWT_TOKEN"; 
 
         Call<Void> call = apiService.deleteHospital(authToken, hospitalId);
         call.enqueue(new Callback<Void>() {
@@ -207,8 +188,7 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d("HospitalListActivity", "Hospital deleted successfully: " + hospitalId);
-                    fetchHospitals(); // Refresh the list after deletion
-                } else {
+                    fetchHospitals(); 
                     String errorMessage = "Error deleting hospital: " + response.code();
                     if (response.errorBody() != null) {
                         try {
@@ -227,10 +207,4 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
             }
         });
     }
-
-    // Optional: Override onBackPressed to control back button behavior if needed
-    // @Override
-    // public void onBackPressed() {
-    //     // Do nothing or handle appropriately
-    // }
-} 
+}

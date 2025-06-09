@@ -27,11 +27,9 @@ public class ProfileActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.navigation_hospitals) {
                     startActivity(new Intent(getApplicationContext(), HospitalListActivity.class));
-                    overridePendingTransition(0, 0); // Disable activity transition animation
-                    finish(); // Close this activity to prevent stacking
-                    return true;
+                    overridePendingTransition(0, 0); 
+                    finish(); 
                 } else if (item.getItemId() == R.id.navigation_profile) {
-                    // Already on this screen
                     return true;
                 }
                 return false;
@@ -52,13 +50,5 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
-        // TODO: Implement profile logic
     }
-
-    // Optional: Override onBackPressed to control back button behavior if needed
-    // @Override
-    // public void onBackPressed() {
-    //     // Do nothing or handle appropriately
-    // }
-} 
+}

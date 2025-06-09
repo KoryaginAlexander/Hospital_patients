@@ -30,7 +30,7 @@ public class LogInActivity extends AppCompatActivity {
         buttonGoToSignUp = findViewById(R.id.buttonGoToSignUp);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://212.192.31.136:5000") // Замените на ваш адрес
+                .baseUrl(AppConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
@@ -43,7 +43,6 @@ public class LogInActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        // Сохраняем токен и username (если username не пришёл — сохраняем введённый)
                         SharedPreferences prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
                         String usernameToSave = response.body().username != null && !response.body().username.isEmpty()
                                 ? response.body().username : username;

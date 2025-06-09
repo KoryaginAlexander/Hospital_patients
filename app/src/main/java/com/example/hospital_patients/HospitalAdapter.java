@@ -9,15 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-// Import ImageView
+
 import android.widget.ImageView;
 
 public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.HospitalViewHolder> {
 
     private List<Hospital> hospitalList;
-    private OnHospitalActionListener actionListener; // Declare the listener
+    private OnHospitalActionListener actionListener; 
 
-    // Modify constructor to accept listener
+
     public HospitalAdapter(List<Hospital> hospitalList, OnHospitalActionListener actionListener) {
         this.hospitalList = hospitalList;
         this.actionListener = actionListener;
@@ -38,22 +38,22 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         holder.hospitalPhoneTextView.setText(hospital.getPhone());
 
         holder.itemView.setOnClickListener(v -> {
-            // Handle hospital item click
+
             Intent intent = new Intent(v.getContext(), PatientListActivity.class);
             intent.putExtra("hospital_id", hospital.getId());
             intent.putExtra("hospital_name", hospital.getName());
             v.getContext().startActivity(intent);
         });
 
-        // Set click listener for edit button
+ 
         holder.imageViewEditHospital.setOnClickListener(v -> {
-            // Use the listener to handle edit action
+
             if (actionListener != null) {
                 actionListener.onEditClick(hospital);
             }
         });
 
-        // Set click listener for delete button
+
         holder.imageViewDeleteHospital.setOnClickListener(v -> {
             // Use the listener to handle delete action
             if (actionListener != null) {
@@ -67,13 +67,13 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         return hospitalList.size();
     }
 
-    // Method to update the list of hospitals
+
     public void updateList(List<Hospital> newHospitalList) {
         this.hospitalList = newHospitalList;
         notifyDataSetChanged();
     }
 
-    // Define the listener interface
+
     public interface OnHospitalActionListener {
         void onEditClick(Hospital hospital);
         void onDeleteClick(Hospital hospital);
@@ -83,16 +83,16 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         TextView hospitalNameTextView;
         TextView hospitalAddressTextView;
         TextView hospitalPhoneTextView;
-        ImageView imageViewEditHospital; // Added ImageView for edit
-        ImageView imageViewDeleteHospital; // Added ImageView for delete
+        ImageView imageViewEditHospital; 
+        ImageView imageViewDeleteHospital; 
 
         public HospitalViewHolder(@NonNull View itemView) {
             super(itemView);
             hospitalNameTextView = itemView.findViewById(R.id.textViewHospitalName);
             hospitalAddressTextView = itemView.findViewById(R.id.textViewHospitalAddress);
             hospitalPhoneTextView = itemView.findViewById(R.id.textViewHospitalPhone);
-            imageViewEditHospital = itemView.findViewById(R.id.imageViewEditHospital); // Find edit ImageView
-            imageViewDeleteHospital = itemView.findViewById(R.id.imageViewDeleteHospital); // Find delete ImageView
+            imageViewEditHospital = itemView.findViewById(R.id.imageViewEditHospital); 
+            imageViewDeleteHospital = itemView.findViewById(R.id.imageViewDeleteHospital); 
         }
     }
 } 

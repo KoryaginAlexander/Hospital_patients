@@ -23,13 +23,10 @@ public class AddEditHospitalActivity extends AppCompatActivity {
 
     private ApiService apiService;
 
-    private int hospitalId = -1; // -1 indicates add mode, positive value indicates edit mode
+    private int hospitalId = -1; 
 
     private ImageView imageViewBack;
     private TextView textViewTitle;
-
-    // TODO: Use proper URL (from config/constants)
-    private static final String BASE_URL = "http://212.192.31.136:5000"; // Changed back to http from https
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +46,20 @@ public class AddEditHospitalActivity extends AppCompatActivity {
 
         setupRetrofit();
 
-        // Check if we are in edit mode
+
         Intent intent = getIntent();
         if (intent.hasExtra("hospital_id")) {
             hospitalId = intent.getIntExtra("hospital_id", -1);
             if (hospitalId != -1) {
-                // Populate fields for editing
+
                 editTextHospitalName.setText(intent.getStringExtra("hospital_name"));
                 editTextHospitalAddress.setText(intent.getStringExtra("hospital_address"));
                 editTextHospitalPhone.setText(intent.getStringExtra("hospital_phone"));
-                buttonSaveHospital.setText("Обновить"); // Change button text for edit mode
-                textViewTitle.setText("Изменить больницу"); // Set title for edit mode
+                buttonSaveHospital.setText("Обновить");
+                textViewTitle.setText("Изменить больницу"); 
             }
         } else {
-            textViewTitle.setText("Добавить больницу"); // Set title for add mode
+            textViewTitle.setText("Добавить больницу");
         }
 
         buttonSaveHospital.setOnClickListener(v -> {
@@ -72,7 +69,7 @@ public class AddEditHospitalActivity extends AppCompatActivity {
 
     private void setupRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(AppConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
@@ -84,7 +81,7 @@ public class AddEditHospitalActivity extends AppCompatActivity {
         String phone = editTextHospitalPhone.getText().toString().trim();
 
         if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
-            // Show a visual indicator to the user
+
             if (name.isEmpty()) {
                 editTextHospitalName.setError("Название не может быть пустым");
             }
@@ -98,18 +95,18 @@ public class AddEditHospitalActivity extends AppCompatActivity {
             return;
         }
 
-        // Create a Hospital object (ID will be included for update, ignored for creation)
+
         Hospital hospitalToSave = new Hospital(hospitalId, name, address, phone);
 
-        // TODO: Get actual token after login
-        String authToken = "Bearer YOUR_JWT_TOKEN"; // Using placeholder - Replace with actual token
+
+        String authToken = "Bearer YOUR_JWT_TOKEN"; 
 
         Call<Hospital> call;
         if (hospitalId == -1) {
-            // Add mode
+
             call = apiService.createHospital(authToken, hospitalToSave);
         } else {
-            // Edit mode
+ 
             call = apiService.updateHospital(authToken, hospitalId, hospitalToSave);
         }
 
@@ -119,8 +116,7 @@ public class AddEditHospitalActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     String mode = (hospitalId == -1) ? "created" : "updated";
                     Log.d("AddEditHospitalActivity", "Hospital " + mode + " successfully: " + response.body().getName());
-                    // TODO: Consider adding a result intent to indicate success and refresh the list
-                    finish(); // Close the activity after successful operation
+                    finish(); 
                 } else {
                     String mode = (hospitalId == -1) ? "creating" : "updating";
                     String errorMessage = "Error " + mode + " hospital: " + response.code();

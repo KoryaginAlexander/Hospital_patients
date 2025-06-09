@@ -29,7 +29,7 @@ public class SignUpActivity extends AppCompatActivity {
         buttonGoToLogin = findViewById(R.id.buttonGoToLogin);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://212.192.31.136:5000") // Замените на ваш адрес
+                .baseUrl(AppConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
@@ -52,7 +52,6 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }
 
-            // Регистрация через API
             apiService.register(new UserRequest(username, password)).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {

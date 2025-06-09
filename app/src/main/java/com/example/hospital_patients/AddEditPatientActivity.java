@@ -30,14 +30,11 @@ public class AddEditPatientActivity extends AppCompatActivity {
 
     private ApiService apiService;
 
-    private int patientId = -1; // -1 indicates add mode, positive value indicates edit mode
-    private int hospitalId = -1; // Mandatory for patient creation/update
+    private int patientId = -1; 
+    private int hospitalId = -1; 
 
     private ImageView imageViewBack;
     private TextView textViewTitle;
-
-    // TODO: Use proper URL (from config/constants)
-    private static final String BASE_URL = "http://212.192.31.136:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +59,12 @@ public class AddEditPatientActivity extends AppCompatActivity {
 
         setupRetrofit();
 
-        // Get hospital ID from Intent (mandatory)
         Intent intent = getIntent();
         if (intent.hasExtra("hospital_id")) {
             hospitalId = intent.getIntExtra("hospital_id", -1);
             if (hospitalId == -1) {
                 Log.e("AddEditPatientActivity", "Error: Hospital ID not provided.");
-                finish(); // Close activity if no valid hospitalId
+                finish(); 
                 return;
             }
         } else {
@@ -77,11 +73,11 @@ public class AddEditPatientActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if we are in edit mode
+
         if (intent.hasExtra("patient_id")) {
             patientId = intent.getIntExtra("patient_id", -1);
             if (patientId != -1) {
-                // Populate fields for editing
+
                 editTextPatientName.setText(intent.getStringExtra("patient_name"));
                 editTextPatientSurname.setText(intent.getStringExtra("patient_surname"));
                 editTextPatientPatronymic.setText(intent.getStringExtra("patient_patronymic"));
@@ -90,18 +86,18 @@ public class AddEditPatientActivity extends AppCompatActivity {
                 editTextPatientAddress.setText(intent.getStringExtra("patient_address"));
                 editTextPatientPhone.setText(intent.getStringExtra("patient_phone"));
                 editTextPatientAdmissionDate.setText(intent.getStringExtra("patient_admission_date"));
-                buttonSavePatient.setText("Обновить"); // Change button text for edit mode
-                textViewTitle.setText("Изменить пациента"); // Set title for edit mode
+                buttonSavePatient.setText("Обновить"); 
+                textViewTitle.setText("Изменить пациента"); 
             }
         } else {
-            textViewTitle.setText("Добавить пациента"); // Set title for add mode
+            textViewTitle.setText("Добавить пациента"); 
         }
 
         buttonSavePatient.setOnClickListener(v -> {
             savePatient();
         });
 
-        // Set up DatePickerDialog for admission date
+
         editTextPatientAdmissionDate.setOnClickListener(v -> {
             showDatePickerDialog();
         });
@@ -109,7 +105,7 @@ public class AddEditPatientActivity extends AppCompatActivity {
 
     private void setupRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(AppConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
@@ -123,7 +119,6 @@ public class AddEditPatientActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, year1, monthOfYear, dayOfMonth) -> {
-                    // Note: monthOfYear is 0-indexed
                     String formattedDate = String.format("%d-%02d-%02d", year1, monthOfYear + 1, dayOfMonth);
                     editTextPatientAdmissionDate.setText(formattedDate);
                 },
@@ -177,14 +172,14 @@ public class AddEditPatientActivity extends AppCompatActivity {
         patientToSave.setAdmission_date(admissionDate);
         patientToSave.setHospitalId(hospitalId);
 
-        String authToken = "Bearer YOUR_JWT_TOKEN"; // Using placeholder - Replace with actual token
+        String authToken = "Bearer YOUR_JWT_TOKEN"; 
 
         Call<Patient> call;
         if (patientId == -1) {
-            // Add mode
+ 
             call = apiService.createPatient(authToken, patientToSave);
         } else {
-            // Edit mode
+
             call = apiService.updatePatient(authToken, patientId, patientToSave);
         }
 

@@ -7,7 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Query;
 
-// Import necessary Retrofit annotations for POST, PUT, DELETE, Body, Path
+
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.DELETE;
@@ -18,9 +18,6 @@ import retrofit2.http.FormUrlEncoded;
 
 public interface ApiService {
 
-    // TODO: Implement proper token handling (login/registration)
-    String AUTH_TOKEN = "Bearer YOUR_JWT_TOKEN"; // Placeholder - Replace with actual token
-
     @GET("/hospitals")
     Call<List<Hospital>> getHospitals(@Header("Authorization") String token);
 
@@ -30,7 +27,6 @@ public interface ApiService {
             @Query("hospital_id") int hospitalId
     );
 
-    // Endpoints for Hospitals
     @POST("/hospitals")
     Call<Hospital> createHospital(
             @Header("Authorization") String token,
@@ -50,7 +46,7 @@ public interface ApiService {
             @Path("hospital_id") int hospitalId
     );
 
-    // Endpoints for Patients
+
     @POST("/patients")
     Call<Patient> createPatient(
             @Header("Authorization") String token,
@@ -93,4 +89,8 @@ class UserRequest {
 class LoginResponse {
     public String token;
     public String username;
+}
+
+class AppConfig {
+    public static final String BASE_URL = "http://212.192.31.136:5000";
 } 

@@ -16,7 +16,7 @@ public class Hospital {
     @SerializedName("phone")
     private String phone;
 
-    // Constructor
+
     public Hospital(int id, String name, String address, String phone) {
         this.id = id;
         this.name = name;
@@ -24,7 +24,6 @@ public class Hospital {
         this.phone = phone;
     }
 
-    // Getters and setters
 
     public int getId() {
         return id;
